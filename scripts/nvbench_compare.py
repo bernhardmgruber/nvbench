@@ -286,9 +286,9 @@ def compare_benches(ref_benches, cmp_benches, threshold, plot):
                 plt.yscale("log")
                 plt.xlabel(plot)
                 plt.ylabel("time [s]")
-                plt.title(device["name"])
+                plt.title(cmp_bench["name"] + " - " + device["name"])
 
-                def plot_line(key, shape, label):
+                def plot_line(key, shape, label, color, marker):
                     x = [float(x) for x in plot_data[key][axis].keys()]
                     y = list(plot_data[key][axis].values())
 
@@ -297,13 +297,14 @@ def compare_benches(ref_benches, cmp_benches, threshold, plot):
                     top = [y[i] + y[i] * noise[i] for i in range(len(x))]
                     bottom = [y[i] - y[i] * noise[i] for i in range(len(x))]
 
-                    p = plt.plot(x, y, shape, marker='o', label=label)
+                    p = plt.plot(x, y, shape, marker=marker, label=label, color=color)
                     plt.fill_between(x, bottom, top, color=p[0].get_color(), alpha=0.1)
+                    return p[0].get_color()
 
 
                 for axis in plot_data['cmp'].keys():
-                    plot_line('cmp', '-', axis)
-                    plot_line('ref', '--', axis + ' ref')
+                    color = plot_line('cmp', '-', axis, None, 'o')
+                    plot_line('ref', '--', axis + ' ref', color, 'x')
 
                 plt.legend()
                 plt.show()
